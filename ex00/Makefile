@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME=megaphone
+NAME=Zombie
 CC = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 INCLUDES_DIR = includes/
@@ -24,7 +24,7 @@ RED = \033[0;31m
 RESET_COLOR = \033[0m
 
 
-SRCS = megaphone.cpp
+SRCS = main.cpp Zombie.cpp newZombie.cpp randomChump.cpp
 OBJFILES = $(SRCS:.cpp=.o)
 OBJS = $(addprefix $(OBJS_DIR), $(OBJFILES))
 
@@ -34,7 +34,7 @@ $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)
 
 builds: $(OBJS)
-	@$(CC) $(CFLAGS) $< -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 $(OBJS_DIR)%.o:%.cpp
 	$(CC) $(CFLAGS) -o $@ -c $<

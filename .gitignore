@@ -192,3 +192,9 @@ out/
 *.su
 *.idb
 *.pdb
+/ex00/.idea/
+/ex01/.idea/
+/ex02/.idea/
+/ex03/.idea/
+/ex04/.idea/
+/ex05/.idea/
