@@ -5,31 +5,30 @@
 #include "Zombie.h"
 
 Zombie::Zombie(){
-	_name = "";
+	name_ = "";
 }
 
-Zombie::Zombie(const std::string &str):_name(str){
+Zombie::Zombie(const std::string &name):name_(name){
 };
 
-Zombie::Zombie(const Zombie &z)
-{
-	_name = z._name;
+Zombie::Zombie(const Zombie &z){
+	name_ = z.name_;
 }
 
 Zombie::~Zombie(){
-	std::cout << _name << " Destroyed"<< std::endl;
+	std::cout << name_ << " Destroyed"<< std::endl;
 }
 
 Zombie &Zombie::operator=(const Zombie &z){
-	_name = z._name;
+	name_ = z.name_;
 	return (*this);
 }
 
-void Zombie::setName(const std::string &str){
-	_name = str;
+void Zombie::setName(const std::string &new_name){
+	name_ = new_name;
 }
 
 void Zombie::announce(){
-	std::cout << _name << ": BraiiiiiiinnnzzzZ..."<< std::endl;
+	std::cout << name_ << ": BraiiiiiiinnnzzzZ..."<< std::endl;
 }
 

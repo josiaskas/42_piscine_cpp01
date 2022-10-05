@@ -10,11 +10,11 @@ int main()
 	std::string *stringPTR = &str;
 	std::string &stringREF = str;
 
-	std::cout << "Adresse\n"
+	std::cout << "--Adresse--\n"
 	          << "str: " << &str
 			  << " ptr: " << stringPTR
 			  << " ref: " << &stringREF << std::endl;
-	std::cout << "\nValeur:\n"
+	std::cout << "--Valeur:--\n"
 	          << "str: " << str
 			  << " ptr: " << *stringPTR
 			  << " ref: " << stringREF << std::endl;
