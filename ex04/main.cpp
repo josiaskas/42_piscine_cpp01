@@ -3,34 +3,35 @@
 //
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
-std::string replace_in_line(std::string &s1, std::string &s2, std::string &line){
-	std::string	new_line;
-	std::size_t found_position;
-	std::size_t i = 0;
-
-	do{
-		found_position = line.find(s1, i);
-		if ((found_position != std::string::npos)){
-			new_line += line.substr(i,  found_position);
-			new_line += s2;
-			i = found_position + s1.length();
-		}else{
-			new_line += line.substr(i, (line.length() - i));
-			i = line.length();
-		}
-	} while (i < line.length());
-	return (new_line);
+int	printFileError(const std::string &filename){
+	std::cerr << "Error: Sed: "<< filename <<" " << std::strerror(errno) << std::endl;
+	return (1);
 }
 
-int	printFileOpenError(const std::string &filename){
-	std::cerr << "Sed: Error: can't open file: " << filename << std::endl;
-	return (1);
+int	do_op(std::ifstream &in, std::ofstream &out, const std::string &s1, const std::string &s2){
+	//copy all file char inside a string
+	std::stringstream datas;
+	datas << in.rdbuf();
+	std::string long_string = datas.str();
+
+	std::size_t i = 0;
+	do{
+		i = long_string.find(s1, i);
+		if (i != std::string::npos){
+			long_string.erase(i, s1.length());
+			long_string.insert(i, s2);
+			i = i + s2.length();
+		}
+	} while (i != std::string::npos);
+	out << long_string;
+	return 0;
 }
 
 int	main(int argc, char *argv[])
 {
-	std::string	s1,s2, filename, replace_filename, new_line;
+	std::string	s1,s2, filename;
 	std::ifstream	in_file;
 	std::ofstream	out_file;
 
@@ -38,28 +39,26 @@ int	main(int argc, char *argv[])
 		filename = argv[1];
 		s1 = argv[2];
 		s2 = argv[3];
-		replace_filename = filename +".replace";
-		if (s1.empty()) {
-			std::cerr << "Sed: Can't replace an empty string" << std::endl;
+
+		in_file.open(filename, std::ios::in);
+		if (!in_file.is_open() || !in_file.good())
+			return (printFileError(filename));
+		if (in_file.eof()){
+			std::cerr << "Error: Sed: Can't replace an empty file" << std::endl;
 			return 1;
 		}
-		in_file.open(filename, std::ios::in);
-		if (!in_file.is_open())
-			return (printFileOpenError(filename));
-		out_file.open(replace_filename, std::ios::out | std::ios::trunc);
-		if (!out_file.is_open())
-			return (printFileOpenError(filename));
-		for (std::string line; std::getline(in_file, line);){
-			new_line = replace_in_line(s1, s2, line);
-			out_file << new_line << std::endl;
+		if (s1.empty()) {
+			std::cerr << "Error: Sed: s1 can not be empty, replace a real thing man" << std::endl;
+			return 1;
 		}
-
-		in_file.close(); // no need, will be closed automatically
-		out_file.close(); // no need, will be closed automatically
+		else {
+			out_file.open(filename +".replace", std::ios::out | std::ios::trunc);
+			if (!out_file.good() || !out_file.is_open())
+				return (printFileError(filename +".replace"));
+			return do_op(in_file, out_file, s1, s2);
+		}
+		//no file close needed destructor will close them and will handle all exception
 	}
-	else {
-		std::cerr << "Sed: Usage: <file> <s1> <s2>"<<std::endl;
-		return 1;
-	}
-	return (0);
+	std::cerr << "Error: Usage: ./sed <file> <s1> <s2>"<<std::endl;
+	return 1;
 }
